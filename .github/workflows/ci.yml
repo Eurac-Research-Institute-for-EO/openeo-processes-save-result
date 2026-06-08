@@ -43,12 +43,11 @@ jobs:
           path: openeo-processes-dask-slim
           submodules: recursive
 
-      - name: Checkout and install raster-to-stac (main)
-        uses: actions/checkout@v6
-        with:
-          repository: Eurac-Research-Institute-for-EO/raster-to-stac
-          ref: main
-          path: raster-to-stac
+      - name: Checkout raster-to-stac (main)
+        run: |
+          git clone --depth=1 \
+            https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git \
+            raster-to-stac
 
       - name: Install dask-slim
         run: |
@@ -56,11 +55,18 @@ jobs:
 
       - name: Install raster-to-stac
         run: |
-          pip install -e raster-to-stac
+          # Patch placeholder version to PEP 440 compliant value
+          sed -i 's/version = "SEMANTIC_VERSION"/version = "0.1.0"/' raster-to-stac/pyproject.toml
+          pip install --no-deps -e raster-to-stac
+          pip install rioxarray pystac s3fs boto3 ujson rio-stac
 
-      - name: Install save-result and test deps
+      - name: Install save-result
         run: |
-          pip install -e ".[test,dev]"
+          pip install -e . --no-deps
+
+      - name: Install test deps
+        run: |
+          pip install ruff pytest
 
       - name: Lint with ruff
         run: |

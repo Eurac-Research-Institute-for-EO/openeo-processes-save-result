@@ -1,6 +1,6 @@
 # openeo-processes-save-result
 
-Custom implementation of the `save_result` process for the openEO processes ecosystem. Writes a `RasterCube` (xarray `Dataset`/`DataArray`) to a chosen output format (COG, NetCDF, Zarr) and returns STAC metadata via [`raster-to-stac`](https://github.com/Eurac-Research-Institute-for-EO/raster-to-stac).
+Custom implementation of the `save_result` process for the openEO processes ecosystem. Writes a `RasterCube` (xarray `Dataset`/`DataArray`) to a chosen output format (COG, NetCDF, Zarr) and returns STAC metadata via [`raster-to-stac`](https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac).
 
 ## Backend compatibility
 
@@ -17,7 +17,7 @@ This package works with **both** upstream openEO process backends. Selection is 
 
 - **Default:** [openeo-processes-dask-slim](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) (`dev_remodel` branch)
 - **Alternative:** [openeo-processes-dask](https://github.com/Open-EO/openeo-processes-dask) (install with `[dask]` extra)
-- [raster-to-stac](https://github.com/Eurac-Research-Institute-for-EO/raster-to-stac) (`main` branch)
+- [raster-to-stac](https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac) (`main` branch)
 
 ## Installation
 
@@ -27,7 +27,7 @@ Requires Python >= 3.12.
 
 ```bash
 git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-dask-slim.git
-git clone git@github.com:Eurac-Research-Institute-for-EO/raster-to-stac.git
+git clone https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git
 git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-save-result.git
 
 cd openeo-processes-dask-slim && git checkout dev_remodel && pip install -e ".[implementations]" && cd ..
@@ -39,7 +39,7 @@ pip install -e openeo-processes-save-result
 
 ```bash
 git clone git@github.com:Open-EO/openeo-processes-dask.git
-git clone git@github.com:Eurac-Research-Institute-for-EO/raster-to-stac.git
+git clone https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git
 git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-save-result.git
 
 pip install -e openeo-processes-dask
