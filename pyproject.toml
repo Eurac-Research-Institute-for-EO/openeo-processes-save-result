@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openeo-processes-save-result"
+version = "0.1.0"
+authors = [
+    { name = "Eurac Research - Institute for Earth Observation" },
+]
+description = "Custom implementation of `save_result` process for the openEO processes ecosystem"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "openeo-processes-dask-slim[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim@dev_remodel",
+    "raster-to-stac @ git+https://github.com/Eurac-Research-Institute-for-EO/raster-to-stac@main",
+    "xarray>=2022.11.0",
+    "rioxarray",
+    "rasterio",
+    "pystac>=1.8.0",
+    "zarr>=2.18.7",
+    "s3fs",
+    "boto3",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["openeo_processes_save_result"]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+test = ["pytest"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-q --import-mode=importlib --no-header -rfE --disable-warnings --log-level=INFO"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py312"
