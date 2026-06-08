@@ -5,9 +5,7 @@ from typing import Optional
 
 import xarray as xr
 
-from openeo_processes_dask_slim.process_implementations.data_model import RasterCube
-from openeo_processes_dask_slim.process_implementations.exceptions import OpenEOException
-
+from ._compat import RasterCube, OpenEOException
 from ._raster_formats import SUPPORTED_FORMATS, write_and_create_stac
 
 _log = logging.getLogger(__name__)

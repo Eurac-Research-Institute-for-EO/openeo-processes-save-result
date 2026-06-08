@@ -35,6 +35,7 @@ packages = ["openeo_processes_save_result"]
 [project.optional-dependencies]
 dev = ["ruff"]
 test = ["pytest"]
+dask = ["openeo-processes-dask[implementations] @ git+https://github.com/Open-EO/openeo-processes-dask.git"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
