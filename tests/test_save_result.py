@@ -62,7 +62,7 @@ def test_format_unsuitable_unknown_format(sample_raster_cube):
 def test_format_unsuitable_case_insensitive(sample_raster_cube):
     with tempfile.TemporaryDirectory() as tmpdir:
         with patch(
-            "openeo_processes_save_result._raster_formats.write_and_create_stac"
+            "openeo_processes_save_result.save_result.write_and_create_stac"
         ) as mock_write:
             mock_write.return_value = {"type": "Collection"}
             result = save_result(
@@ -77,7 +77,7 @@ def test_format_unsuitable_case_insensitive(sample_raster_cube):
 def test_save_result_passes_output_folder(sample_raster_cube):
     with tempfile.TemporaryDirectory() as tmpdir:
         with patch(
-            "openeo_processes_save_result._raster_formats.write_and_create_stac"
+            "openeo_processes_save_result.save_result.write_and_create_stac"
         ) as mock_write:
             mock_write.return_value = {"type": "Collection"}
             save_result(
@@ -91,7 +91,7 @@ def test_save_result_passes_output_folder(sample_raster_cube):
 def test_save_result_returns_stac_dict(sample_raster_cube):
     with tempfile.TemporaryDirectory() as tmpdir:
         with patch(
-            "openeo_processes_save_result._raster_formats.write_and_create_stac"
+            "openeo_processes_save_result.save_result.write_and_create_stac"
         ) as mock_write:
             expected = {
                 "type": "Collection",
@@ -110,7 +110,7 @@ def test_save_result_returns_stac_dict(sample_raster_cube):
 def test_save_result_forwards_stac_options(sample_raster_cube):
     with tempfile.TemporaryDirectory() as tmpdir:
         with patch(
-            "openeo_processes_save_result._raster_formats.write_and_create_stac"
+            "openeo_processes_save_result.save_result.write_and_create_stac"
         ) as mock_write:
             mock_write.return_value = {}
             save_result(
