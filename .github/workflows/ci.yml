@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / py${{ matrix.python-version }}
+    runs-on: ${{ matrix.image }}
+    strategy:
+      matrix:
+        os: [Ubuntu]
+        python-version: ["3.12"]
+        include:
+          - os: Ubuntu
+            image: ubuntu-24.04
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgdal-dev
+
+      - name: Checkout and install dask-slim (dev_remodel)
+        uses: actions/checkout@v6
+        with:
+          repository: Eurac-Research-Institute-for-EO/openeo-processes-dask-slim
+          ref: dev_remodel
+          path: openeo-processes-dask-slim
+          submodules: recursive
+
+      - name: Checkout and install raster-to-stac (main)
+        uses: actions/checkout@v6
+        with:
+          repository: Eurac-Research-Institute-for-EO/raster-to-stac
+          ref: main
+          path: raster-to-stac
+
+      - name: Install dask-slim
+        run: |
+          pip install -e "openeo-processes-dask-slim[implementations]"
+
+      - name: Install raster-to-stac
+        run: |
+          pip install -e raster-to-stac
+
+      - name: Install save-result and test deps
+        run: |
+          pip install -e ".[test,dev]"
+
+      - name: Lint with ruff
+        run: |
+          ruff check openeo_processes_save_result/ tests/
+
+      - name: Run tests
+        run: |
+          pytest -v
+
+      - name: Verify import works
+        run: |
+          python -c "
+          from openeo_processes_save_result import save_result
+          from openeo_processes_save_result.specs import save_result as spec
+          from openeo_processes_save_result._compat import _BACKEND
+          print(f'Backend detected: {_BACKEND}')
+          print(f'save_result process spec: {spec[\"id\"]}')
+          print('All imports OK')
+          "
