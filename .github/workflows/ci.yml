@@ -60,9 +60,13 @@ jobs:
           pip install --no-deps -e raster-to-stac
           pip install rioxarray pystac s3fs boto3 ujson rio-stac
 
-      - name: Install save-result and test deps
+      - name: Install save-result
         run: |
-          pip install -e ".[test,dev]"
+          pip install -e . --no-deps
+
+      - name: Install test deps
+        run: |
+          pip install ruff pytest
 
       - name: Lint with ruff
         run: |
