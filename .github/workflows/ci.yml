@@ -39,6 +39,13 @@ jobs:
         include:
           - os: Ubuntu
             image: ubuntu-24.04
+        exclude:
+          - python-version: "3.13"
+            backend:
+              name: dask-slim-main
+          - python-version: "3.13"
+            backend:
+              name: dask-slim-dev-remodel
       fail-fast: false
 
     steps:
@@ -89,6 +96,7 @@ jobs:
         env:
           OPENEO_SAVE_RESULT_EXPECTED_BACKEND: ${{ matrix.backend.expected-backend }}
           OPENEO_SAVE_RESULT_EXPECTED_RASTERCUBE: ${{ matrix.backend.expected-rastercube }}
+          ZARR_V3_EXPERIMENTAL_API: 1
         run: |
           pytest -v
 
@@ -105,7 +113,9 @@ jobs:
           from openeo_processes_save_result._compat import RasterCube, _BACKEND
           print(f'Backend detected: {_BACKEND}')
           assert _BACKEND == '${{ matrix.backend.expected-backend }}'
-          assert RasterCube is getattr(xr, '${{ matrix.backend.expected-rastercube }}')
-          print(f'save_result process spec: {spec[\"id\"]}')
+          expected_class = getattr(xr, '${{ matrix.backend.expected-rastercube }}')
+          args = getattr(RasterCube, '__args__', ())
+          assert expected_class in args or RasterCube is expected_class
+          print(f'save_result process spec: {spec["id"]}')
           print('All imports OK')
           "

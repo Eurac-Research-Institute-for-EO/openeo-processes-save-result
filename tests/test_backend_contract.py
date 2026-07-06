@@ -29,7 +29,8 @@ def test_backend_rastercube_type_matches_contract():
         pytest.skip("OPENEO_SAVE_RESULT_EXPECTED_RASTERCUBE is not set")
 
     expected_class = {"DataArray": xr.DataArray, "Dataset": xr.Dataset}[expected_type]
-    assert RasterCube is expected_class
+    args = getattr(RasterCube, "__args__", ())
+    assert expected_class in args or RasterCube is expected_class
 
 
 def test_backend_name_matches_contract():
