@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu]
-        python-version: ["3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
         include:
           - os: Ubuntu
             image: ubuntu-24.04
@@ -25,58 +25,50 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Set up Python ${{ matrix.python-version }} with geospatial dependencies
+        uses: mamba-org/setup-micromamba@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          environment-name: save-result-test
+          condarc: |
+            channels:
+              - conda-forge
+            channel_priority: strict
+          create-args: >-
+            python=${{ matrix.python-version }}
+            pip
+            gdal
+            rasterio
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgdal-dev
-
-      - name: Checkout and install dask-slim (dev_remodel)
+      - name: Checkout openeo-processes-dask (main)
         uses: actions/checkout@v6
         with:
-          repository: Eurac-Research-Institute-for-EO/openeo-processes-dask-slim
-          ref: dev_remodel
-          path: openeo-processes-dask-slim
+          repository: Eurac-Research-Institute-for-EO/openeo-processes-dask
+          ref: main
+          path: openeo-processes-dask
           submodules: recursive
 
-      - name: Checkout raster-to-stac (main)
+      - name: Install openeo-processes-dask
+        shell: bash -el {0}
         run: |
-          git clone --depth=1 \
-            https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git \
-            raster-to-stac
-
-      - name: Install dask-slim
-        run: |
-          pip install -e "openeo-processes-dask-slim[implementations]"
-
-      - name: Install raster-to-stac
-        run: |
-          # Patch placeholder version to PEP 440 compliant value
-          sed -i 's/version = "SEMANTIC_VERSION"/version = "0.1.0"/' raster-to-stac/pyproject.toml
-          pip install --no-deps -e raster-to-stac
-          pip install rioxarray pystac s3fs boto3 ujson rio-stac
+          pip install -e "openeo-processes-dask[implementations]"
 
       - name: Install save-result
+        shell: bash -el {0}
         run: |
-          pip install -e . --no-deps
-
-      - name: Install test deps
-        run: |
-          pip install ruff pytest
+          pip install -e ".[test,dev]"
 
       - name: Lint with ruff
+        shell: bash -el {0}
         run: |
           ruff check openeo_processes_save_result/ tests/
 
       - name: Run tests
+        shell: bash -el {0}
         run: |
           pytest -v
 
       - name: Verify import works
+        shell: bash -el {0}
         run: |
           python -c "
           from openeo_processes_save_result import save_result
