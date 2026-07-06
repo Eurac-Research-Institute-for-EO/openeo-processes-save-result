@@ -24,8 +24,7 @@ def save_result(
     format: str,
     options: Optional[dict] = None,
 ) -> dict:
-    if options is None:
-        options = {}
+    options = dict(options or {})
 
     fmt_upper = format.upper()
 
@@ -55,7 +54,7 @@ def save_result(
     return stac_dict
 
 
-def _validate_data_cube(data: xr.Dataset, fmt_upper: str) -> None:
+def _validate_data_cube(data: xr.Dataset | xr.DataArray, fmt_upper: str) -> None:
     empty_formats = {"NETCDF", "ZARR"}
 
     if _is_cube_empty(data) and fmt_upper in empty_formats:
@@ -64,9 +63,11 @@ def _validate_data_cube(data: xr.Dataset, fmt_upper: str) -> None:
         )
 
 
-def _is_cube_empty(data: xr.Dataset) -> bool:
+def _is_cube_empty(data: xr.Dataset | xr.DataArray) -> bool:
     if data is None:
         return True
+    if isinstance(data, xr.DataArray):
+        return data.size == 0
     for var in data.data_vars:
         if data[var].size > 0:
             return False

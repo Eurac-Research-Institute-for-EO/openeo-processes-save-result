@@ -36,18 +36,36 @@ def test_is_cube_empty_with_empty_dataset():
     assert _is_cube_empty(ds) is True
 
 
+def test_is_cube_empty_with_empty_dataarray(empty_dataarray_raster_cube):
+    assert _is_cube_empty(empty_dataarray_raster_cube) is True
+
+
 def test_is_cube_empty_with_data(sample_raster_cube):
     assert _is_cube_empty(sample_raster_cube) is False
+
+
+def test_is_cube_empty_with_dataarray(sample_dataarray_raster_cube):
+    assert _is_cube_empty(sample_dataarray_raster_cube) is False
 
 
 def test_validate_data_cube_nonempty_passes(sample_raster_cube):
     _validate_data_cube(sample_raster_cube, "GTIFF")
 
 
+def test_validate_dataarray_cube_nonempty_passes(sample_dataarray_raster_cube):
+    _validate_data_cube(sample_dataarray_raster_cube, "GTIFF")
+
+
 @pytest.mark.parametrize("fmt", ["NETCDF", "ZARR"])
 def test_validate_data_cube_empty_raises(empty_raster_cube, fmt):
     with pytest.raises(DataCubeEmpty):
         _validate_data_cube(empty_raster_cube, fmt)
+
+
+@pytest.mark.parametrize("fmt", ["NETCDF", "ZARR"])
+def test_validate_dataarray_cube_empty_raises(empty_dataarray_raster_cube, fmt):
+    with pytest.raises(DataCubeEmpty):
+        _validate_data_cube(empty_dataarray_raster_cube, fmt)
 
 
 def test_validate_data_cube_empty_cog_ok(empty_raster_cube):
@@ -72,6 +90,20 @@ def test_format_unsuitable_case_insensitive(sample_raster_cube):
             )
             assert result == {"type": "Collection"}
             assert mock_write.call_args[1]["format"] == "GTIFF"
+
+
+def test_save_result_accepts_dataarray_raster_cube(sample_dataarray_raster_cube):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with patch(
+            "openeo_processes_save_result.save_result.write_and_create_stac"
+        ) as mock_write:
+            mock_write.return_value = {"type": "Collection"}
+            save_result(
+                data=sample_dataarray_raster_cube,
+                format="GTiff",
+                options={"output_folder": tmpdir},
+            )
+            assert mock_write.call_args[1]["data"] is sample_dataarray_raster_cube
 
 
 def test_save_result_passes_output_folder(sample_raster_cube):
@@ -105,6 +137,29 @@ def test_save_result_returns_stac_dict(sample_raster_cube):
                 options={"output_folder": tmpdir, "collection_id": "test-collection"},
             )
             assert result == expected
+
+
+def test_save_result_does_not_mutate_options(sample_raster_cube):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with patch(
+            "openeo_processes_save_result.save_result.write_and_create_stac"
+        ) as mock_write:
+            mock_write.return_value = {"type": "Collection"}
+            options = {
+                "output_folder": tmpdir,
+                "collection_id": "test-collection",
+                "zarr_format": 2,
+                "custom_option": "forwarded",
+            }
+
+            save_result(data=sample_raster_cube, format="Zarr", options=options)
+
+            assert options == {
+                "output_folder": tmpdir,
+                "collection_id": "test-collection",
+                "zarr_format": 2,
+                "custom_option": "forwarded",
+            }
 
 
 def test_save_result_forwards_stac_options(sample_raster_cube):
