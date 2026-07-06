@@ -1,60 +1,56 @@
 # openeo-processes-save-result
 
-Custom implementation of the `save_result` process for the openEO processes ecosystem. Writes a `RasterCube` (xarray `Dataset`/`DataArray`) to a chosen output format (COG, NetCDF, Zarr) and returns STAC metadata via [`raster-to-stac`](https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac).
+Custom implementation of the `save_result` process for the openEO processes ecosystem. Writes a `RasterCube` (xarray `Dataset`/`DataArray`) to a chosen output format (COG, NetCDF, Zarr) and returns STAC metadata via [`raster2stac`](https://pypi.org/project/raster2stac/).
 
 ## Backend compatibility
 
-This package works with **both** upstream openEO process backends. Selection is automatic via a `try/except` import — it prefers `openeo_processes_dask_slim` and falls back to `openeo_processes_dask`:
+This package works with **both** upstream openEO process backends. Selection is automatic via a `try/except` import — it prefers `openeo_processes_dask` and falls back to `openeo_processes_dask_slim`:
 
 | Backend | Branches tested | `RasterCube` type |
 |---|---|---|
+| [`openeo-processes-dask`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask) | `main` | `xr.Dataset` |
 | [`openeo-processes-dask-slim`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) | `main`, `dev_remodel` | `xr.Dataset` (dev_remodel) / `xr.Dataset \| xr.DataArray` (main) |
-| [`openeo-processes-dask`](https://github.com/Open-EO/openeo-processes-dask) | `master` | `xr.Dataset` |
 
 [`openeo-processes-dedl-cube-load`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dedl-cube-load) (`main` branch) pins `dask-slim@dev_remodel` — this package is fully compatible.
 
 ## Dependencies
 
-- **Default:** [openeo-processes-dask-slim](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) (`dev_remodel` branch)
-- **Alternative:** [openeo-processes-dask](https://github.com/Open-EO/openeo-processes-dask) (install with `[dask]` extra)
-- [raster-to-stac](https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac) (`main` branch)
+- **Default:** [openeo-processes-dask](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask) (`main` branch)
+- **Alternative:** [openeo-processes-dask-slim](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) (install with `[dask-slim]` extra)
+- [raster2stac](https://pypi.org/project/raster2stac/) (`>=2026.6.2`)
 
 ## Installation
 
-Requires Python >= 3.12.
+Requires Python >= 3.11.
 
-### Development install (local checkouts, default dask-slim backend)
+### Development install (local checkouts, default dask backend)
 
 ```bash
-git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-dask-slim.git
-git clone https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git
+git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-dask.git
 git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-save-result.git
 
-cd openeo-processes-dask-slim && git checkout dev_remodel && pip install -e ".[implementations]" && cd ..
-pip install -e raster-to-stac
+cd openeo-processes-dask && git checkout main && pip install -e ".[implementations]" && cd ..
 pip install -e openeo-processes-save-result
 ```
 
-### Alternative: use with openeo-processes-dask (full)
+### Alternative: use with openeo-processes-dask-slim
 
 ```bash
-git clone git@github.com:Open-EO/openeo-processes-dask.git
-git clone https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git
+git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-dask-slim.git
 git clone git@github.com:Eurac-Research-Institute-for-EO/openeo-processes-save-result.git
 
-pip install -e openeo-processes-dask
-pip install -e raster-to-stac
+cd openeo-processes-dask-slim && git checkout dev_remodel && pip install -e ".[implementations]" && cd ..
 pip install -e openeo-processes-save-result
 ```
 
 ### Standalone install
 
 ```bash
-# Default (pulls dask-slim dev_remodel)
+# Default (pulls openeo-processes-dask main)
 pip install git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-save-result.git
 
-# With full dask instead of dask-slim
-pip install git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-save-result.git#egg=openeo-processes-save-result[dask]
+# With dask-slim instead of full dask
+pip install git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-save-result.git#egg=openeo-processes-save-result[dask-slim]
 ```
 
 ### Install test/dev extras

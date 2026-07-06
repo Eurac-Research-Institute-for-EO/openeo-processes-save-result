@@ -11,16 +11,17 @@ authors = [
 description = "Custom implementation of `save_result` process for the openEO processes ecosystem"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "openeo-processes-dask-slim[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim@dev_remodel",
-    "raster-to-stac @ git+https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git@main",
-    "xarray>=2022.11.0",
+    "openeo-processes-dask[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask.git@main",
+    "raster2stac>=2026.6.2",
+    "pandas<3.0.0",
+    "xarray>=2024.10.0,<2025.1.2",
     "rioxarray",
     "rasterio",
     "pystac>=1.8.0",
@@ -35,7 +36,7 @@ packages = ["openeo_processes_save_result"]
 [project.optional-dependencies]
 dev = ["ruff"]
 test = ["pytest"]
-dask = ["openeo-processes-dask[implementations] @ git+https://github.com/Open-EO/openeo-processes-dask.git"]
+dask-slim = ["openeo-processes-dask-slim[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim@dev_remodel"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -48,4 +49,4 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 120
 indent-width = 4
-target-version = "py312"
+target-version = "py311"
