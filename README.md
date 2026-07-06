@@ -8,8 +8,9 @@ This package works with **both** upstream openEO process backends. Selection is 
 
 | Backend | Branches tested | `RasterCube` type |
 |---|---|---|
-| [`openeo-processes-dask`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask) | `main` | `xr.Dataset` |
-| [`openeo-processes-dask-slim`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) | `main`, `dev_remodel` | `xr.Dataset` (dev_remodel) / `xr.Dataset \| xr.DataArray` (main) |
+| [`openeo-processes-dask`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask) | `main` | `xr.DataArray` |
+| [`openeo-processes-dask-slim`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) | `main` | `xr.DataArray` |
+| [`openeo-processes-dask-slim`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) | `dev_remodel` | `xr.Dataset` |
 
 [`openeo-processes-dedl-cube-load`](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dedl-cube-load) (`main` branch) pins `dask-slim@dev_remodel` — this package is fully compatible.
 
