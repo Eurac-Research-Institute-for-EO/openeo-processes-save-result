@@ -116,6 +116,7 @@ jobs:
           expected_class = getattr(xr, '${{ matrix.backend.expected-rastercube }}')
           args = getattr(RasterCube, '__args__', ())
           assert expected_class in args or RasterCube is expected_class
-          print(f'save_result process spec: {spec["id"]}')
+          spec_id = spec['id']
+          print(f'save_result process spec: {spec_id}')
           print('All imports OK')
           "
