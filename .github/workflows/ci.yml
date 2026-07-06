@@ -11,12 +11,31 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.os }} / py${{ matrix.python-version }}
+    name: ${{ matrix.os }} / py${{ matrix.python-version }} / ${{ matrix.backend.name }}
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
         os: [Ubuntu]
         python-version: ["3.11", "3.12", "3.13"]
+        backend:
+          - name: dask-main
+            repository: Eurac-Research-Institute-for-EO/openeo-processes-dask
+            ref: main
+            expected-backend: dask
+            expected-rastercube: DataArray
+            uninstall-default-dask: "false"
+          - name: dask-slim-main
+            repository: Eurac-Research-Institute-for-EO/openeo-processes-dask-slim
+            ref: main
+            expected-backend: dask-slim
+            expected-rastercube: DataArray
+            uninstall-default-dask: "true"
+          - name: dask-slim-dev-remodel
+            repository: Eurac-Research-Institute-for-EO/openeo-processes-dask-slim
+            ref: dev_remodel
+            expected-backend: dask-slim
+            expected-rastercube: Dataset
+            uninstall-default-dask: "true"
         include:
           - os: Ubuntu
             image: ubuntu-24.04
@@ -39,23 +58,26 @@ jobs:
             gdal
             rasterio
 
-      - name: Checkout openeo-processes-dask (main)
+      - name: Checkout backend
         uses: actions/checkout@v6
         with:
-          repository: Eurac-Research-Institute-for-EO/openeo-processes-dask
-          ref: main
-          path: openeo-processes-dask
+          repository: ${{ matrix.backend.repository }}
+          ref: ${{ matrix.backend.ref }}
+          path: backend
           submodules: recursive
-
-      - name: Install openeo-processes-dask
-        shell: bash -el {0}
-        run: |
-          pip install -e "openeo-processes-dask[implementations]"
 
       - name: Install save-result
         shell: bash -el {0}
         run: |
           pip install -e ".[test,dev]"
+
+      - name: Install selected backend
+        shell: bash -el {0}
+        run: |
+          if [ "${{ matrix.backend.uninstall-default-dask }}" = "true" ]; then
+            pip uninstall -y openeo-processes-dask
+          fi
+          pip install -e "backend[implementations]"
 
       - name: Lint with ruff
         shell: bash -el {0}
@@ -64,17 +86,26 @@ jobs:
 
       - name: Run tests
         shell: bash -el {0}
+        env:
+          OPENEO_SAVE_RESULT_EXPECTED_BACKEND: ${{ matrix.backend.expected-backend }}
+          OPENEO_SAVE_RESULT_EXPECTED_RASTERCUBE: ${{ matrix.backend.expected-rastercube }}
         run: |
           pytest -v
 
       - name: Verify import works
         shell: bash -el {0}
+        env:
+          OPENEO_SAVE_RESULT_EXPECTED_BACKEND: ${{ matrix.backend.expected-backend }}
+          OPENEO_SAVE_RESULT_EXPECTED_RASTERCUBE: ${{ matrix.backend.expected-rastercube }}
         run: |
           python -c "
+          import xarray as xr
           from openeo_processes_save_result import save_result
           from openeo_processes_save_result.specs import save_result as spec
-          from openeo_processes_save_result._compat import _BACKEND
+          from openeo_processes_save_result._compat import RasterCube, _BACKEND
           print(f'Backend detected: {_BACKEND}')
+          assert _BACKEND == '${{ matrix.backend.expected-backend }}'
+          assert RasterCube is getattr(xr, '${{ matrix.backend.expected-rastercube }}')
           print(f'save_result process spec: {spec[\"id\"]}')
           print('All imports OK')
           "
