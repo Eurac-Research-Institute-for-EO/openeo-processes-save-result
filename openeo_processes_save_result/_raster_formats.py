@@ -3,10 +3,26 @@ import logging
 from pathlib import Path
 from typing import Any, Optional
 
+import pystac.validation
 import xarray as xr
 from raster2stac import Raster2STAC
 
 _log = logging.getLogger(__name__)
+
+
+class _NoopValidator(pystac.validation.STACValidator):
+    """Validator that skips all STAC schema validation — used when
+    ``skip_validation=True`` to avoid remote HTTP schema fetches in
+    environments without internet access (e.g. restricted executor pods)."""
+
+    def validate(self, stac_dict, stac_object_type, stac_version, extensions, href):
+        return []
+
+    def validate_core(self, stac_dict, stac_object_type, stac_version, href):
+        return []
+
+    def validate_extension(self, stac_dict, stac_object_type, stac_uri, href):
+        return []
 
 _FORMAT_METHOD_MAP = {
     "GTIFF": "generate_cog_stac",
@@ -34,6 +50,7 @@ def write_and_create_stac(
     consolidated: Optional[bool] = None,
     chunks: Optional[Any] = None,
     item_prefix: str = "",
+    skip_validation: bool = False,
     **kwargs,
 ) -> dict:
     fmt_upper = format.upper()
@@ -60,11 +77,22 @@ def write_and_create_stac(
 
     generate_method = getattr(stac, method_name)
 
-    if method_name == "generate_zarr_stac":
-        item_id = kwargs.pop("item_id", None)
-        generate_method(item_id=item_id)
-    else:
-        generate_method()
+    # Temporarily replace PySTAC validator to skip remote schema fetches
+    # when running in environments without internet access.
+    _original_validator = None
+    if skip_validation:
+        _original_validator = pystac.validation.RegisteredValidator.get_validator()
+        pystac.validation.RegisteredValidator.set_validator(_NoopValidator())
+
+    try:
+        if method_name == "generate_zarr_stac":
+            item_id = kwargs.pop("item_id", None)
+            generate_method(item_id=item_id)
+        else:
+            generate_method()
+    finally:
+        if _original_validator is not None:
+            pystac.validation.RegisteredValidator.set_validator(_original_validator)
 
     stac_path = Path(stac.output_folder) / stac.output_file
     if stac_path.exists():

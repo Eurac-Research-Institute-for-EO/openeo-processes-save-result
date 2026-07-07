@@ -36,6 +36,8 @@ def save_result(
 
     _validate_data_cube(data, fmt_upper)
 
+    skip_validation = options.pop("skip_validation", False)
+
     output_folder = options.pop("output_folder", None)
     if output_folder is None:
         output_folder = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S%f")[:-3]
@@ -48,6 +50,7 @@ def save_result(
         data=data,
         format=fmt_upper,
         output_folder=output_folder,
+        skip_validation=skip_validation,
         **stac_options,
     )
 
