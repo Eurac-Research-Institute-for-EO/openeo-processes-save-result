@@ -21,7 +21,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "openeo-processes-dask[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask.git@main",
+    "openeo-processes-dask[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask.git@v2026.7.1-eurac.2",
     "raster2stac>=2026.6.2",
     "pandas<3.0.0",
     "xarray>=2024.10.0,<2025.1.2",
