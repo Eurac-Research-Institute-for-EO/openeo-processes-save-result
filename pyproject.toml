@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "openeo-processes-save-result"
-version = "0.1.0"
+version = "2026.7.1"
 authors = [
     { name = "Eurac Research - Institute for Earth Observation" },
 ]
@@ -21,8 +21,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "openeo-processes-dask[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask.git@v2026.7.1-eurac.2",
-    "raster2stac>=2026.6.2",
+    "openeo-processes-dask[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask.git@v2026.7.1-eurac-dev.1",
+    "raster2stac @ git+https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git@trial-save-result-dev-backend",
     "pandas<3.0.0",
     "xarray>=2024.10.0,<2025.1.2",
     "rioxarray",
