@@ -21,7 +21,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "openeo @ git+ssh://git@github.com/Eurac-Research-Institute-for-EO/openeo-python-client.git@120499ebeef1d198eb9f63426b8b725741ae07d4",
+    "openeo @ git+ssh://git@github.com/Eurac-Research-Institute-for-EO/openeo-python-client.git@v2026.7.1-eurac-dev.1",
     "openeo-processes-dask[implementations] @ git+https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask.git@v2026.7.1-eurac-dev.1",
     "raster2stac @ git+https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git@trial-save-result-dev-backend",
     "pandas<3.0.0",
