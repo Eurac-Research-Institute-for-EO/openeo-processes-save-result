@@ -28,7 +28,7 @@ dependencies = [
     "xarray>=2025.8.0,<2026.0.0",
     "rioxarray",
     "rasterio",
-    "pystac>=1.8.0",
+    "pystac>=1.8.0,<1.15.0",
     "zarr>=2.18.7",
     "s3fs",
     "boto3",
