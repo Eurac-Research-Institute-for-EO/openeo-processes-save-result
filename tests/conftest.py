@@ -52,6 +52,49 @@ def sample_dataarray_raster_cube() -> xr.DataArray:
 
 
 @pytest.fixture
+def sample_temporally_reduced_raster_cube() -> xr.DataArray:
+    data = xr.DataArray(
+        np.ones((1, 3, 4), dtype="float32"),
+        dims=("bands", "y", "x"),
+        coords={
+            "bands": ["tmean"],
+            "y": np.arange(3).astype(float),
+            "x": np.arange(4).astype(float),
+        },
+        attrs={
+            "openeo_x_dim": "x",
+            "openeo_y_dim": "y",
+            "openeo_temporal_dims": [],
+            "openeo_band_dims": ["bands"],
+            "reduced_dimensions_min_values": {
+                "t": "2020-06-01T00:00:00.000000000"
+            },
+        },
+        name="cube",
+    )
+    return data.rio.write_crs("EPSG:4326")
+
+
+@pytest.fixture
+def sample_spatially_reduced_raster_cube() -> xr.DataArray:
+    return xr.DataArray(
+        np.ones((1, 2), dtype="float32"),
+        dims=("bands", "t"),
+        coords={
+            "bands": ["B01"],
+            "t": pd.to_datetime(["2024-01-01", "2024-01-02"]),
+        },
+        attrs={
+            "openeo_x_dim": "x",
+            "openeo_y_dim": "y",
+            "openeo_temporal_dims": ["t"],
+            "openeo_band_dims": ["bands"],
+        },
+        name="cube",
+    )
+
+
+@pytest.fixture
 def empty_raster_cube() -> xr.Dataset:
     return xr.Dataset(
         {"B01": (["y", "x"], np.array([[]]).reshape(0, 0))},
