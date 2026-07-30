@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import pystac.validation
 import xarray as xr
@@ -41,14 +41,14 @@ def write_and_create_stac(
     collection_id: str = "save_result",
     collection_url: str = "",
     s3_upload: bool = False,
-    bucket_name: Optional[str] = None,
-    bucket_file_prefix: Optional[str] = None,
-    aws_region: Optional[str] = None,
-    aws_access_key: Optional[str] = None,
-    aws_secret_key: Optional[str] = None,
+    bucket_name: str | None = None,
+    bucket_file_prefix: str | None = None,
+    aws_region: str | None = None,
+    aws_access_key: str | None = None,
+    aws_secret_key: str | None = None,
     zarr_format: int = 3,
-    consolidated: Optional[bool] = None,
-    chunks: Optional[Any] = None,
+    consolidated: bool | None = None,
+    chunks: Any | None = None,
     item_prefix: str = "",
     skip_validation: bool = False,
     **kwargs,

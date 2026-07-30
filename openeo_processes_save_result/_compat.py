@@ -11,4 +11,4 @@ except ImportError:
 
     _BACKEND = "dask-slim"
 
-__all__ = ["RasterCube", "OpenEOException", "save_result_spec", "_BACKEND"]
+__all__ = ["_BACKEND", "OpenEOException", "RasterCube", "save_result_spec"]

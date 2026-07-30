@@ -145,20 +145,19 @@ def test_save_result_e2e_spatially_reduced_cube(
 def test_save_result_e2e_spatially_reduced_cube_rejects_gtiff(
     sample_spatially_reduced_raster_cube,
 ):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with pytest.raises(
-            ValueError,
-            match="COG output requires x and y spatial dimensions",
-        ):
-            save_result(
-                data=sample_spatially_reduced_raster_cube,
-                format="GTiff",
-                options={
-                    "output_folder": tmpdir,
-                    "collection_id": "test-no-space",
-                    "skip_validation": True,
-                },
-            )
+    with tempfile.TemporaryDirectory() as tmpdir, pytest.raises(
+        ValueError,
+        match="COG output requires x and y spatial dimensions",
+    ):
+        save_result(
+            data=sample_spatially_reduced_raster_cube,
+            format="GTiff",
+            options={
+                "output_folder": tmpdir,
+                "collection_id": "test-no-space",
+                "skip_validation": True,
+            },
+        )
 
 
 @pytest.mark.slow

@@ -1,11 +1,10 @@
 import datetime
 import logging
 from pathlib import Path
-from typing import Optional
 
 import xarray as xr
 
-from ._compat import RasterCube, OpenEOException
+from ._compat import OpenEOException, RasterCube
 from ._raster_formats import SUPPORTED_FORMATS, write_and_create_stac
 
 _log = logging.getLogger(__name__)
@@ -22,7 +21,7 @@ class DataCubeEmpty(OpenEOException):
 def save_result(
     data: RasterCube,
     format: str,
-    options: Optional[dict] = None,
+    options: dict | None = None,
 ) -> dict:
     options = dict(options or {})
 
@@ -40,7 +39,9 @@ def save_result(
 
     output_folder = options.pop("output_folder", None)
     if output_folder is None:
-        output_folder = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S%f")[:-3]
+        output_folder = datetime.datetime.now(datetime.UTC).strftime(
+            "%Y%m%d%H%M%S%f"
+        )[:-3]
 
     Path(output_folder).mkdir(parents=True, exist_ok=True)
 
