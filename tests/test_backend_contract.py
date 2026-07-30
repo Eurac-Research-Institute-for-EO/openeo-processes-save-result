@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 import xarray as xr
 
-from openeo_processes_save_result._compat import RasterCube, _BACKEND
+from openeo_processes_save_result._compat import _BACKEND, RasterCube
 from openeo_processes_save_result.save_result import save_result
 
 
@@ -42,17 +42,16 @@ def test_backend_name_matches_contract():
 
 
 def test_save_result_accepts_backend_contract_cube(backend_contract_cube):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with patch(
-            "openeo_processes_save_result.save_result.write_and_create_stac"
-        ) as mock_write:
-            mock_write.return_value = {"type": "Collection"}
+    with tempfile.TemporaryDirectory() as tmpdir, patch(
+        "openeo_processes_save_result.save_result.write_and_create_stac"
+    ) as mock_write:
+        mock_write.return_value = {"type": "Collection"}
 
-            result = save_result(
-                data=backend_contract_cube,
-                format="GTiff",
-                options={"output_folder": tmpdir},
-            )
+        result = save_result(
+            data=backend_contract_cube,
+            format="GTiff",
+            options={"output_folder": tmpdir},
+        )
 
-            assert result == {"type": "Collection"}
-            assert mock_write.call_args[1]["data"] is backend_contract_cube
+        assert result == {"type": "Collection"}
+        assert mock_write.call_args[1]["data"] is backend_contract_cube
