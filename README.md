@@ -18,7 +18,7 @@ This package works with **both** upstream openEO process backends. Selection is 
 
 - **Default:** [openeo-processes-dask](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask) (`main` branch)
 - **Alternative:** [openeo-processes-dask-slim](https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-dask-slim) (install with `[dask-slim]` extra)
-- [raster2stac](https://pypi.org/project/raster2stac/) (`>=2026.6.2`)
+- [raster2stac](https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac) from the `raster-to-stac` tag `v2026.7.1-eurac-dev.1` (package version `2026.7.2`)
 
 ## Installation
 
