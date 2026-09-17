@@ -21,13 +21,15 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    # Declared as ranges, not git URLs: pip treats the same repo pinned at a tag
-    # and at a commit as conflicting requirements, so hard-pinning here makes the
-    # package uninstallable alongside an application that pins the same forks.
+    # Declared as ranges, never as git URLs. pip treats a git URL pinned at a tag
+    # and the same repo pinned at a commit as conflicting requirements, and poetry
+    # always exports git dependencies at their resolved commit -- so ANY git pin
+    # here makes this package uninstallable in a poetry-locked application,
+    # whether or not that application pins the same repo.
     # The consuming application selects the revisions.
     "openeo>=0.36.0",
     "openeo-processes-dask[implementations]>=2026.7",
-    "raster2stac @ git+https://gitlab.inf.unibz.it/earth_observation_public/raster-to-stac.git@v2026.7.1-eurac-dev.1",
+    "raster2stac>=2026.6",
     "pandas<3.0.0",
     "xarray>=2025.8.0,<2026.0.0",
     "rioxarray",
